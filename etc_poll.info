@@ -1,0 +1,8 @@
+name = ETC Poll
+description = Add custom poll field
+core = 7.x
+
+datestamp = "1471251636"
+
+stylesheets[all][]= css/etc_poll.css
+scripts[] = js/jquery.cookie.min.js

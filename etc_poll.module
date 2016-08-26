@@ -1,0 +1,184 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Mohammadreza
+ * Datestamp: 1471251715
+ */
+
+
+require_once 'includes/etc_poll_forms.inc';
+
+/**
+ * Implements hook_field_info().
+ */
+function etc_poll_field_info() {
+    //@todo: machine name attrbute for the choice field (delta doesn't work when changing orders afterwards)
+    return array(
+        'etc_option' => array(
+            'label' => t('Poll options'),
+            'description' => t('This field stores varchar text in the database.'),
+            'default_widget' => 'etc_choices_default',
+            'default_formatter' => 'etc_choices_default',
+        ),
+    );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function etc_poll_menu()
+{
+    $items['etc_poll/%/vote/%/%'] = array(
+        'title' => 'ETC Poll',
+        'page callback' => 'etc_poll_menu_callback',
+        'page arguments' => array(1,3,4),
+        'access arguments' => array('access content'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+
+function etc_poll_menu_callback($field_name,$entity_id,$delta){
+    return drupal_render(_etc_poll_render_result($entity_id,$field_name));
+}
+
+
+/**
+ * Implements hook_field_is_empty().
+ */
+function etc_poll_field_is_empty($item, $field) {
+    if (!isset($item['value']) || $item['value'] === '') {
+        return !isset($item['summary']) || $item['summary'] === '';
+    }
+    return FALSE;
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function etc_poll_field_widget_info() {
+    return array(
+        'etc_choices_default' => array(
+            'label' => t('Text field'),
+            'field types' => array('etc_option'),
+        ),
+    );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function etc_poll_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+
+    switch ($instance['widget']['type']) {
+        case 'etc_choices_default':
+            $element['value'] = array(
+                '#type' => 'textfield',
+                '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+                '#size' => 60,
+                '#maxlength' => 255,
+                '#attributes' => array('class' => array('etc-poll-text')),
+            );
+            break;
+    }
+    return $element;
+}
+
+
+/**
+ * Implements hook_field_widget_error().
+ */
+function etc_poll_field_widget_error($element, $error, $form, &$form_state) {
+    switch ($error['error']) {
+        default:
+            $error_element = $element[$element['#columns'][0]];
+            break;
+    }
+
+    form_error($error_element, $error['message']);
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function etc_poll_field_formatter_info() {
+    return array(
+        'etc_choices_default' => array(
+            'label' => t('Default'),
+            'field types' => array('etc_option'),
+        ),
+    );
+}
+
+
+/**
+ * Implement hook_field_formatter_view().
+ */
+function etc_poll_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display)
+{
+    $element = array();
+    switch ($display['type']) {
+        case 'etc_choices_default':
+            $question = db_query('select etc_poll_question_value from {field_data_etc_poll_question} where entity_id = :nid',array('nid'=>$entity->nid,))->fetchField();
+            $element[0] = array('#markup' => theme('etcpoll_form', array('#items' => $items, "#entity" => $entity, '#field' => $field, '#question'=>$question)));
+            break;
+    }
+    return $element;
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function etc_poll_field_extra_fields()
+{
+    $extra['node']['article'] = array(
+        'form' => array(
+            'etc_poll_result_field' => array(
+                'label' => 'ETC Poll result',
+                'description' => 'Show the result of the poll',
+                'weight' => 0,
+            ),
+        ),
+    );
+    return $extra;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function etc_poll_form_alter(&$form, &$form_state, $form_id)
+{
+    if($form_id == 'article_node_form'){
+        $form['etc_poll_result_field'] = array(
+            '#type' => 'markup',
+            '#markup' => "<div id='etc-poll-result-graph'></div>",
+        );
+    }
+    return $form;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function etc_poll_theme(){
+    $path = drupal_get_path('module','etc_poll');
+    return array(
+        'etcpoll_form' => array(
+            'render element' => 'element',
+            'path' => $path.'/theme',
+            'file' => 'etc_poll.theme.inc',
+        ),
+        'etcpoll_result' => array(
+            'render element' => 'element',
+            'path' => $path.'/theme',
+            'file' => 'etc_poll.theme.inc',
+        ),
+        'etcpoll_row' => array(
+            'render element' => 'element',
+            'path' => $path.'/theme',
+            'file' => 'etc_poll.theme.inc',
+        ),
+    );
+}
+

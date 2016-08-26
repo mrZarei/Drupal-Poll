@@ -1,0 +1,46 @@
+.choice{
+    position:relative;
+    z-index:10;
+    padding:5px;
+}
+
+.etc-poll-data{
+    position:relative;
+    margin-bottom:5px;
+    border:1px solid #ccc;
+}
+.etc-poll-percentage{
+    background-color: #de1515;
+    position:absolute;
+    bottom: 0;
+    top: 0;
+    z-index: 0;
+}
+
+#ep-result-wrapper{
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#ep-form-wrapper input[type=radio ]:not(old){
+    display:none;
+}
+
+#ep-form-wrapper input[type=radio] + label{
+    display      : inline-block;
+    padding: 5px 10px;
+    line-height  : 1.5em;
+    width:100%;
+    border:1px solid #ccc;
+    cursor:pointer;
+    color:#000;
+    margin-bottom: 5px;
+}
+
+#ep-form-wrapper input[type=radio]:checked + label{
+    background-color:#34DE7E;
+    cursor:default;
+    color:#666;
+}
+

@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the choices module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function etc_poll_field_schema($field) {
+  switch ($field['type']) {
+    default:
+      $columns = array(
+        'value' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => FALSE,
+        ),
+      );
+      break;
+  }
+  $columns += array(
+    'format' => array(
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => FALSE,
+    ),
+  );
+  $columns += array(
+      'vote' => array(
+        'type' => 'int',
+        'unsigned' => True,
+        'default_value' => 0,
+        'not null' => False,
+      ),
+    );
+  return array(
+    'columns' => $columns,
+    'indexes' => array(
+      'format' => array('format'),
+    ),
+    'foreign keys' => array(
+      'format' => array(
+        'table' => 'filter_format',
+        'columns' => array('format' => 'format'),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_enable().
+ */
+function etc_poll_enable(){
+
+    // Check if our field is not already created.
+    drupal_set_message('test','status');
+    if (!field_info_field('etc_poll_question')) {
+        drupal_set_message('start adding question');
+        // Create the field base.
+        $field = array(
+            'field_name' => 'etc_poll_question',
+            'type' => 'text',
+        );
+        field_create_field($field);
+        // Create the field instance on the bundle.
+        $instance = array(
+            'field_name' => 'etc_poll_question',
+            'entity_type' => 'node',
+            'label' => 'Poll Question',
+            'bundle' => 'article',
+            // If you don't set the "required" property then the field wont be required by default.
+            'required' => False,
+            'settings' => array(),
+            'widget' => array(
+                'type' => 'textfield',
+            ),
+        );
+        field_create_instance($instance);
+        drupal_set_message('etc_poll_question has been add!');
+    }
+    if(!field_info_field('etc_poll_options')){
+        drupal_set_message('start adding option');
+        module_invoke_all('field_info');
+        module_invoke_all('field_widget_info');
+        $field = array(
+            'field_name' => 'etc_poll_options',
+            'type' => 'etc_option',
+            'cardinality' =>FIELD_CARDINALITY_UNLIMITED,
+        );
+        field_create_field($field);
+        $instance = array(
+            'field_name' =>'etc_poll_options',
+            'entity_type' => 'node',
+            'label' => t('poll options'),
+            'bundle' => 'article',
+            'require' => FALSE,
+            'settings' => array(),
+            'widget' => array(
+                'type' => 'etc_option'
+            ),
+        );
+        field_create_instance($instance);
+        drupal_set_message('etc_poll_options has been add!');
+    }
+
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function etc_poll_uninstall(){
+    if(field_info_field('etc_poll_question')){
+        field_delete_field('etc_poll_question');
+        drupal_set_message('etc_poll_question was removed successfully!');
+    }
+    if(field_info_field('etc_poll_options')){
+        field_delete_field('etc_poll_options');
+        drupal_set_message('etc_poll_options was removed!');
+    }
+}
+
