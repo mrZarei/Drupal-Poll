@@ -105,3 +105,20 @@ function _etc_poll_render_result($entity_id){
     }
     return $content;
 }
+
+function _etc_poll_render_question(){
+    $questions = db_query("SELECT * From {field_data_etc_poll_question}");
+    $header = array('artikel','Fråga','resultat');
+    $rows = array();
+    foreach ($questions as $quest) {
+        $node_id = $quest->entity_id;
+        $node = node_load($node_id);
+        $rows[] = array(
+            $node->title,
+            $quest->etc_poll_question_value,
+            l('view',"/admin/etc_poll/vote/{$node_id}"),
+            );
+    }
+    return theme('table',array('header'=>$header,'rows'=>$rows));
+
+}

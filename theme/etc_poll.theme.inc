@@ -16,7 +16,7 @@ function theme_etcpoll_result($variables)
     $items = $variables['element']['#items'];
     $total_vote_count = '';
     if (isset($variables['element']['#total_vote'])) {
-        $total_vote_count = format_plural($variables['element']['#total_vote'], 'Totalt 0 röster', 'Totalt @count röster');
+        $total_vote_count = format_plural($variables['element']['#total_vote'], 'Totalt 1 röst', 'Totalt @count röster');
     }
     $output = array();
     $output[] = "<div id='ep-result-wrapper'>";
@@ -26,7 +26,7 @@ function theme_etcpoll_result($variables)
             $percentage = round($item['#percentage']);
             $bar = "<div class='etc-poll-percentage' style='width: {$percentage}%'></div>";
         }
-        $output[] = "<div class='etc-poll-item'><div class='etc-poll-data clearfix'>{$item['#markup']}$bar</div></div>";
+        $output[] = "<div class='etc-poll-item'><div class='etc-poll-data clearfix'>{$item['#markup']}$bar</div><span class='etc-poll-percent-value'>{$percentage}%</span></div>";
     }
     $output[] = "<div class='etc-poll-total-vote-count'>$total_vote_count</div>";
     $output[] ="</div>";

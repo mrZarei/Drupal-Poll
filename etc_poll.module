@@ -23,24 +23,39 @@ function etc_poll_field_info() {
     );
 }
 
+
 /**
  * Implements hook_menu().
  */
 function etc_poll_menu()
 {
-    $items['etc_poll/vote/%'] = array(
+    $items['admin/etc_poll/vote/%'] = array(
         'title' => 'ETC Poll',
         'page callback' => 'etc_poll_menu_callback',
-        'page arguments' => array(2),
+        'page arguments' => array('votes',3),
         'access arguments' => array('access content'),
-        'type' => MENU_NORMAL_ITEM,
+        'type' => MENU_LOCAL_TASK,
+        'context' => MENU_CONTEXT_INLINE,
+    );
+    $items['admin/etc_poll/vote'] = array(
+        'title' => 'ETC Poll',
+        'page callback' => 'etc_poll_menu_callback',
+        'page arguments' => array('question'),
+        'access arguments' => array('access content'),
     );
     return $items;
 }
 
 
-function etc_poll_menu_callback($entity_id){
-    return drupal_render(_etc_poll_render_result($entity_id));
+function etc_poll_menu_callback($type,$entity_id){
+    switch($type){
+        case 'votes':
+            return drupal_render(_etc_poll_render_result($entity_id));
+            break;
+        case 'question':
+            return _etc_poll_render_question();
+            break;
+    }
 }
 
 

@@ -11,9 +11,11 @@
             var cookie = $.cookie('ep-' +field_name+'-'+entityId);
             if(cookie){
                 $("#ep-form-wrapper").css("display","none");
+                $("#ep-form-wrapper").remove();
             }
             else{
                 $("#ep-result-wrapper").css("display","none");
+                $("#ep-result-wrapper").remove();
             }
         }
     }

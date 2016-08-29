@@ -44,3 +44,11 @@
     color:#666;
 }
 
+.etc-poll-item{
+    position: relative;
+}
+.etc-poll-percent-value{
+    position:absolute;
+    right:5px;
+    top:7px;
+}
