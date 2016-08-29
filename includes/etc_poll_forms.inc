@@ -29,7 +29,6 @@ function etc_poll_polling_form($form,&$form_state,$variables){
         ),
     );
     $form_state['entity_id'] = $entity->nid;
-    $form_state['field_name'] = $field['field_name'];
     drupal_add_js(array('ep'=>array('entity_id' => $entity->nid,'field_name'=>$field['field_name'])),'setting');
     drupal_add_js(drupal_get_path('module','etc_poll').'/js/etc_poll.js');
     return $form;
@@ -41,12 +40,12 @@ function etc_poll_polling_form($form,&$form_state,$variables){
 function etc_poll_polling_form_ajax_callback($form, &$form_state)
 {
     //check if field_name and entity_id has been set
-    if (isset($form_state['field_name']) && !empty($form_state['field_name']) &&
-        isset($form_state['entity_id']) && !empty($form_state['entity_id'])
+    $field_name = 'etc_poll_options';
+    if (isset($form_state['entity_id']) && !empty($form_state['entity_id'])
     ) {
         $delta = $form_state['values']['etc_poll_radios'];
-        $table_name = 'field_data_' . $form_state['field_name'];
-        $field_vote = $form_state['field_name'] . '_vote'; //get the vote column in the databse
+        $table_name = 'field_data_' . $field_name;
+        $field_vote = $field_name . '_vote'; //get the vote column in the databse
         $entity_id = $form_state['entity_id'];
 
         //get the count of selected choice
@@ -63,18 +62,19 @@ function etc_poll_polling_form_ajax_callback($form, &$form_state)
             ->condition('delta', $delta, '=')
             ->execute();
         $values= array();
-        drupal_add_js(array('ep'=>array('entity_id' => $entity_id,'field_name'=>$form_state['field_name'],'delta'=>$delta)),'setting');
+        drupal_add_js(array('ep'=>array('entity_id' => $entity_id,'field_name'=>$field_name,'delta'=>$delta)),'setting');
         drupal_add_js(drupal_get_path('module','etc_poll').'/js/etc_poll_set_cookie.js');
-        return _etc_poll_render_result($entity_id,$form_state['field_name']);
+        return _etc_poll_render_result($entity_id);
     }
     return 'Error!';
 
 }
 
-function _etc_poll_render_result($entity_id,$field_name){
+function _etc_poll_render_result($entity_id){
     $content = '';
+    $field_name = 'etc_poll_options';
     try {
-        if (isset($entity_id) && isset($field_name)) {
+        if (field_info_field($field_name)) {
 
             $table = 'field_data_' . $field_name;
             $field_value = $field_name . '_value';

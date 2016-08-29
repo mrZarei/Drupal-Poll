@@ -28,10 +28,10 @@ function etc_poll_field_info() {
  */
 function etc_poll_menu()
 {
-    $items['etc_poll/%/vote/%/%'] = array(
+    $items['etc_poll/vote/%'] = array(
         'title' => 'ETC Poll',
         'page callback' => 'etc_poll_menu_callback',
-        'page arguments' => array(1,3,4),
+        'page arguments' => array(2),
         'access arguments' => array('access content'),
         'type' => MENU_NORMAL_ITEM,
     );
@@ -39,8 +39,8 @@ function etc_poll_menu()
 }
 
 
-function etc_poll_menu_callback($field_name,$entity_id,$delta){
-    return drupal_render(_etc_poll_render_result($entity_id,$field_name));
+function etc_poll_menu_callback($entity_id){
+    return drupal_render(_etc_poll_render_result($entity_id));
 }
 
 

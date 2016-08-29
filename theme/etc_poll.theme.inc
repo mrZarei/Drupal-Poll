@@ -3,12 +3,11 @@
 function theme_etcpoll_form($variables){
     $items = array();
     $entity = $variables['#entity'];
-    $field = $variables['#field'];
     $question = $variables['#question'];
     $poll = drupal_get_form('etc_poll_polling_form',$variables);
     $items[] = "<h1 class='etc-poll-question'>{$question}</h1>";
     $items[] = drupal_render($poll);
-    $items[] = drupal_render(_etc_poll_render_result($entity->nid,$field['field_name']));
+    $items[] = drupal_render(_etc_poll_render_result($entity->nid));
     return join('',$items);
 }
 
