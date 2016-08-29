@@ -23,7 +23,18 @@ function etc_poll_field_info() {
     );
 }
 
-
+/**
+ * Implements hook_permission().
+ */
+function etc_poll_permission()
+{
+    return array(
+        'ETC Poll Result' =>array(
+            'title' => t('ETC POLL'),
+            'description' => t('Access to poll result administration page'),
+        ),
+    );
+}
 /**
  * Implements hook_menu().
  */
@@ -33,7 +44,7 @@ function etc_poll_menu()
         'title' => 'ETC Poll',
         'page callback' => 'etc_poll_menu_callback',
         'page arguments' => array('votes',3),
-        'access arguments' => array('access content'),
+        'access arguments' => array('ETC Poll Result'),
         'type' => MENU_LOCAL_TASK,
         'context' => MENU_CONTEXT_INLINE,
     );
@@ -41,7 +52,7 @@ function etc_poll_menu()
         'title' => 'ETC Poll',
         'page callback' => 'etc_poll_menu_callback',
         'page arguments' => array('question'),
-        'access arguments' => array('access content'),
+        'access arguments' => array('ETC Poll Result'),
     );
     return $items;
 }
