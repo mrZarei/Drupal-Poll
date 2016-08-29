@@ -43,6 +43,10 @@
     cursor:default;
     color:#666;
 }
+#ep-form-wrapper input[type=radio]:not(:checked) + label:hover{
+    background-color:#c9edd9;
+    border:1px solid #0b3e1d;
+}
 
 .etc-poll-item{
     position: relative;

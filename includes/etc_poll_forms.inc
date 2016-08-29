@@ -17,6 +17,7 @@ function etc_poll_polling_form($form,&$form_state,$variables){
         '#type' => 'radios',
         '#title' => '',
         '#options' => $options,
+        '#default_value' => 0,
     );
     $form['submit'] = array(
         '#type' => 'submit',
