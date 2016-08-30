@@ -6,6 +6,13 @@ function etc_poll_polling_form($form,&$form_state,$variables){
     $entity = $variables['#entity'];
     $items = $variables['#items'];
     $field = $variables['#field'];
+    if(isset($_SESSION['etc_poll_'.$entity->nid])){
+        $delta = $_SESSION['etc_poll_'.$entity->nid];
+        drupal_add_js(array('ep'=>array('entity_id' => $entity->nid,'field_name'=>'etc_poll_options','delta'=>$delta)),'setting');
+        drupal_add_js(drupal_get_path('module','etc_poll').'/js/etc_poll_set_cookie.js');
+        unset($_SESSION['etc_poll_'.$entity->nid]);
+        return;
+    }
     $options = array();
     foreach ($items as $delta=>$item) {
         $options[$delta] = $item['value'];
@@ -22,12 +29,6 @@ function etc_poll_polling_form($form,&$form_state,$variables){
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('vote!'),
-        '#ajax' => array(
-            'callback' => 'etc_poll_polling_form_ajax_callback',
-            'wrapper' => 'ep-form-wrapper',
-            'method' => 'replace',
-            'effect' => 'fade',
-        ),
     );
     $form_state['entity_id'] = $entity->nid;
     drupal_add_js(array('ep'=>array('entity_id' => $entity->nid,'field_name'=>$field['field_name'])),'setting');
@@ -36,9 +37,9 @@ function etc_poll_polling_form($form,&$form_state,$variables){
 }
 
 /**
- * Ajax callback for etc_poll_polling_form.
+ * submit for etc_poll_polling_form.
  */
-function etc_poll_polling_form_ajax_callback($form, &$form_state)
+function etc_poll_polling_form_submit($form, &$form_state)
 {
     //check if field_name and entity_id has been set
     $field_name = 'etc_poll_options';
@@ -62,10 +63,7 @@ function etc_poll_polling_form_ajax_callback($form, &$form_state)
             ->condition('entity_id', $entity_id, '=')
             ->condition('delta', $delta, '=')
             ->execute();
-        $values= array();
-        drupal_add_js(array('ep'=>array('entity_id' => $entity_id,'field_name'=>$field_name,'delta'=>$delta)),'setting');
-        drupal_add_js(drupal_get_path('module','etc_poll').'/js/etc_poll_set_cookie.js');
-        return _etc_poll_render_result($entity_id);
+        $_SESSION['etc_poll_'.$entity_id] = $delta;
     }
     return 'Error!';
 
@@ -76,7 +74,6 @@ function _etc_poll_render_result($entity_id){
     $field_name = 'etc_poll_options';
     try {
         if (field_info_field($field_name)) {
-
             $table = 'field_data_' . $field_name;
             $field_value = $field_name . '_value';
             $field_vote = $field_name . '_vote';
