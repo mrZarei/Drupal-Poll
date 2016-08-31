@@ -6,6 +6,24 @@
  */
 
 /**
+ * Implements hoo_requirements().
+ */
+function etc_poll_requirements($phase){
+    $requirements = array();
+    if($phase == 'install'){
+        if(field_info_field('etc_poll_options')){
+            $requirements['etc_poll_options']['severity'] = REQUIREMENT_ERROR;
+            $requirements['etc_poll_options']['description'] = t('field etc_poll_option already exists!');
+        }
+        if(field_info_field('etc_poll_question')){
+            $requirements['etc_poll_question']['severity'] = REQUIREMENT_ERROR;
+            $requirements['etc_poll_question']['description'] = t('field etc_poll_question already exists!');
+        }
+    }
+    return $requirements;
+}
+
+/**
  * Implements hook_field_schema().
  */
 function etc_poll_field_schema($field) {
@@ -55,9 +73,7 @@ function etc_poll_field_schema($field) {
 function etc_poll_enable(){
 
     // Check if our field is not already created.
-    drupal_set_message('test','status');
-    if (!field_info_field('etc_poll_question')) {
-        drupal_set_message('start adding question');
+    if (!field_info_field('etc_poll_question') && !field_info_field('etc_poll_options')) {
         // Create the field base.
         $field = array(
             'field_name' => 'etc_poll_question',
@@ -78,10 +94,8 @@ function etc_poll_enable(){
             ),
         );
         field_create_instance($instance);
-        drupal_set_message('etc_poll_question has been add!');
-    }
-    if(!field_info_field('etc_poll_options')){
-        drupal_set_message('start adding option');
+
+        //Adding etc_poll_options
         module_invoke_all('field_info');
         module_invoke_all('field_widget_info');
         $field = array(
@@ -102,9 +116,8 @@ function etc_poll_enable(){
             ),
         );
         field_create_instance($instance);
-        drupal_set_message('etc_poll_options has been add!');
     }
-
+    drupal_set_message('ETC Poll has been enabled successfully','OK');
 }
 
 /**

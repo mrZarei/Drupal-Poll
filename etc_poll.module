@@ -153,22 +153,6 @@ function etc_poll_field_formatter_view($entity_type, $entity, $field, $instance,
     return $element;
 }
 
-/**
- * Implements hook_field_extra_fields().
- */
-function etc_poll_field_extra_fields()
-{
-    $extra['node']['article'] = array(
-        'form' => array(
-            'etc_poll_result_field' => array(
-                'label' => 'ETC Poll result',
-                'description' => 'Show the result of the poll',
-                'weight' => 0,
-            ),
-        ),
-    );
-    return $extra;
-}
 
 /**
  * Implements hook_form_alter().
