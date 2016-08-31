@@ -12,7 +12,6 @@ require_once 'includes/etc_poll_forms.inc';
  * Implements hook_field_info().
  */
 function etc_poll_field_info() {
-    //@todo: machine name attrbute for the choice field (delta doesn't work when changing orders afterwards)
     return array(
         'etc_option' => array(
             'label' => t('Poll options'),
@@ -106,6 +105,10 @@ function etc_poll_field_widget_form(&$form, &$form_state, $field, $instance, $la
                 '#maxlength' => 255,
                 '#attributes' => array('class' => array('etc-poll-text')),
             );
+            $element['vote'] = array(
+                '#type' => 'hidden',
+                '#value' => isset($items[$delta]['vote']) ? $items[$delta]['vote'] : 0 ,
+            );
             break;
     }
     return $element;
@@ -151,21 +154,6 @@ function etc_poll_field_formatter_view($entity_type, $entity, $field, $instance,
             break;
     }
     return $element;
-}
-
-
-/**
- * Implements hook_form_alter().
- */
-function etc_poll_form_alter(&$form, &$form_state, $form_id)
-{
-    if($form_id == 'article_node_form'){
-        $form['etc_poll_result_field'] = array(
-            '#type' => 'markup',
-            '#markup' => "<div id='etc-poll-result-graph'></div>",
-        );
-    }
-    return $form;
 }
 
 /**

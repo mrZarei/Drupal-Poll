@@ -28,7 +28,7 @@ function etc_poll_polling_form($form,&$form_state,$variables){
     );
     $form['submit'] = array(
         '#type' => 'submit',
-        '#value' => t('vote!'),
+        '#value' => t('Rösta'),
     );
     $form_state['entity_id'] = $entity->nid;
     drupal_add_js(array('ep'=>array('entity_id' => $entity->nid,'field_name'=>$field['field_name'])),'setting');
