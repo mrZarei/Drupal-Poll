@@ -1,7 +1,7 @@
-###ETC POLL Module
+### POLL Module
 This module provides a simple poll setting for each article which has been add to Drupal content;
 
-##How does it work:
+## How does it work:
 This module first adds a new field type which is called etc_option. etc_option field type contains a textfield
 with unlimited cardinality setting.
 
@@ -11,7 +11,7 @@ After creating the new field type, the module creates two field as well:
 
 etc_poll_question holds the related question to the poll and etc_poll_options holds the choices.
 
-##Installation guide:
+## Installation guide:
 1-After module has been install and enabled successfully two new field will be added to the article
  content type, which can be found in admin/structure/types/manage/article/fields. Set them in your desire place
  in node form.
